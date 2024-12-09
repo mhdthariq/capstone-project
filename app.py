@@ -1,24 +1,48 @@
 import os
 from flask import Flask, request, jsonify
+from google.cloud import storage
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
-from google.cloud import storage
 import numpy as np
 import uuid
 
 app = Flask(__name__)
 
+# Konfigurasi Google Cloud Storage
+BUCKET_NAME = "capstone-bucket12"  
+MODEL_BLOB_NAME = "model/converted_model.h5"  # Path model 
+LOCAL_MODEL_PATH = "/tmp/converted_model.h5"  # Path lokal untuk menyimpan model
+
+# Fungsi untuk mengunduh model dari bucket
+def download_model(bucket_name, source_blob_name, destination_file_name):
+    try:
+        # Buat direktori jika belum ada
+        if not os.path.exists(os.path.dirname(destination_file_name)):
+            os.makedirs(os.path.dirname(destination_file_name))
+
+        # Unduh model dari bucket
+        storage_client = storage.Client()
+        bucket = storage_client.bucket(bucket_name)
+        blob = bucket.blob(source_blob_name)
+        blob.download_to_filename(destination_file_name)
+        print(f"Model downloaded to {destination_file_name}")
+    except Exception as e:
+        raise ValueError(f"Error downloading model from GCS: {str(e)}")
+
+# Unduh model jika belum ada di direktori lokal
+if not os.path.exists(LOCAL_MODEL_PATH):
+    download_model(BUCKET_NAME, MODEL_BLOB_NAME, LOCAL_MODEL_PATH)
+
 # Load model
-model = load_model('best_model.keras')
+model = load_model(LOCAL_MODEL_PATH, compile=False)
 
 # Set target image size (sesuaikan dengan input size model Anda)
-TARGET_SIZE = (224, 224)  # Misalnya, untuk model yang membutuhkan gambar 224x224
+TARGET_SIZE = (224, 224)  # Sesuaikan ukuran dengan model Anda
 
 # Fungsi untuk menyimpan gambar ke Google Cloud Storage
 def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
     """Upload file ke Google Cloud Storage."""
     try:
-        # Inisialisasi storage client
         storage_client = storage.Client()
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(destination_blob_name)
@@ -28,20 +52,12 @@ def upload_to_gcs(bucket_name, source_file_name, destination_blob_name):
     except Exception as e:
         raise ValueError(f"Error uploading to GCS: {str(e)}")
 
+# Fungsi untuk memproses gambar
 def prepare_image(image_path):
-    """
-    Fungsi untuk memuat dan mempersiapkan gambar agar sesuai dengan input model.
-    """
     try:
-        # Memuat gambar dan mengubah ukuran sesuai model
         image = load_img(image_path, target_size=TARGET_SIZE)
-        # Konversi gambar ke array numpy
-        image_array = img_to_array(image)
-        # Normalisasi (jika model Anda memerlukan normalisasi)
-        image_array = image_array / 255.0
-        # Tambahkan dimensi batch
-        image_array = np.expand_dims(image_array, axis=0)
-        return image_array
+        image_array = img_to_array(image) / 255.0
+        return np.expand_dims(image_array, axis=0)
     except Exception as e:
         raise ValueError(f"Error in processing image: {str(e)}")
 
@@ -56,11 +72,6 @@ def index():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Log request method and content type
-    print(f"Request method: {request.method}")
-    print(f"Content-Type: {request.content_type}")
-
-    # Memastikan ada file yang diunggah
     if 'file' not in request.files:
         return jsonify({
             "status": {
@@ -70,9 +81,7 @@ def predict():
         }), 400
 
     file = request.files['file']
-    print(f"Received file: {file.filename}")
 
-    # Memastikan file telah diunggah
     if file.filename == '':
         return jsonify({
             "status": {
@@ -83,15 +92,14 @@ def predict():
 
     try:
         # Simpan file sementara
-        temp_file_path = os.path.join('temp', f"{uuid.uuid4()}_{file.filename}")
-        os.makedirs('temp', exist_ok=True)
+        temp_file_path = os.path.join('/tmp', f"{uuid.uuid4()}_{file.filename}")
+        if not os.path.exists(os.path.dirname(temp_file_path)):
+            os.makedirs(os.path.dirname(temp_file_path))
         file.save(temp_file_path)
 
         # Upload gambar ke Google Cloud Storage
-        bucket_name = "ember-capstone"  # Ganti dengan nama bucket Anda
-        destination_blob_name = f"uploads/{file.filename}"  # Path di dalam bucket
-        gcs_url = upload_to_gcs(bucket_name, temp_file_path, destination_blob_name)
-        print(f"Uploaded to GCS: {gcs_url}")
+        destination_blob_name = f"uploads/{file.filename}"
+        gcs_url = upload_to_gcs(BUCKET_NAME, temp_file_path, destination_blob_name)
 
         # Persiapkan gambar
         image = prepare_image(temp_file_path)
@@ -103,7 +111,6 @@ def predict():
         # Membersihkan file sementara
         os.remove(temp_file_path)
 
-        # Mengembalikan hasil prediksi dan URL file di GCS
         return jsonify({
             "status": {
                 "code": 200,
