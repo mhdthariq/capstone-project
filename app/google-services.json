@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "316986325161",
+    "project_id": "emoticalm-f3e32",
+    "storage_bucket": "emoticalm-f3e32.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316986325161:android:fb3335ad9b3f5854bb51b8",
+        "android_client_info": {
+          "package_name": "com.capstone.emoticalm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgKAJjHCYPWrxG6jOnFgXjl4r__2-4Rz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
