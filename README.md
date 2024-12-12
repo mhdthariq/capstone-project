@@ -25,7 +25,7 @@ EmotiCalm aims to leverage advanced technology to assess stress levels from faci
 
 Below is the system architecture for the EmotiCalm project:
 
-[Project Architecture](Image/architecture-cloud.jpg)
+<img src="Image/architecture-cloud.jpg" alt="Screenshot" style="max-width: 100%; height: auto;">
 
 ### Key Components:
 - **Google Cloud Storage**: Stores machine learning models and user-uploaded images.
