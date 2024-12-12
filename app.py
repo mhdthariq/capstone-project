@@ -13,6 +13,22 @@ BUCKET_NAME = "capstone-bucket12"
 MODEL_BLOB_NAME = "model/converted_model.h5"  # Path model 
 LOCAL_MODEL_PATH = "/tmp/converted_model.h5"  # Path lokal untuk menyimpan model
 
+# Mapping label ke deskripsi
+LABELS = {
+    0: "no stress",
+    1: "weak stress",
+    2: "medium stress",
+    3: "strong stress"
+}
+
+# Mapping label ke suggestion
+SUGGESTIONS = {
+    0: "Anda sedang dalam kondisi yang sangat baik! Untuk mempertahankan keseimbangan ini, coba tambahkan variasi pada rutinitas Anda. Mungkin Anda bisa mencoba kelas memasak baru atau bergabung dengan komunitas membaca. Jangan lupa untuk selalu bersyukur atas hal-hal kecil dalam hidup. Ingat, menjaga kesehatan mental sama pentingnya dengan kesehatan fisik.",
+    1: "Mungkin Anda mulai merasa sedikit kewalahan. Cobalah untuk meluangkan waktu setiap hari untuk melakukan hal-hal yang Anda nikmati, seperti mendengarkan musik atau berjalan-jalan di alam. Teknik pernapasan dalam juga sangat efektif untuk mengurangi stres ringan. Jangan ragu untuk meminta bantuan teman atau keluarga jika Anda merasa perlu didengarkan.",
+    2: "Stres yang Anda alami saat ini cukup signifikan. Selain menerapkan teknik relaksasi, pertimbangkan untuk membuat jurnal. Menuliskan pikiran dan perasaan Anda dapat membantu Anda memahami sumber stres Anda dengan lebih baik. Jika Anda merasa kesulitan mengelola stres sendiri, jangan ragu untuk berkonsultasi dengan seorang terapis.",
+    3: "Stres yang Anda alami saat ini sangat memengaruhi kualitas hidup Anda. Sangat penting untuk mencari bantuan profesional sesegera mungkin. Seorang psikolog atau psikiater dapat memberikan diagnosis yang akurat dan menyusun rencana perawatan yang tepat. Selain itu, bergabung dengan kelompok dukungan dapat memberikan Anda rasa komunitas dan dukungan dari orang-orang yang memahami apa yang Anda alami."
+}
+
 # Fungsi untuk mengunduh model dari bucket
 def download_model(bucket_name, source_blob_name, destination_file_name):
     try:
@@ -107,6 +123,8 @@ def predict():
         # Prediksi dengan model
         predictions = model.predict(image)
         predicted_label = np.argmax(predictions, axis=1)[0]
+        predicted_label_description = LABELS.get(predicted_label, "Unknown")
+        suggestion = SUGGESTIONS.get(predicted_label, "Suggestion not available.")
 
         # Membersihkan file sementara
         os.remove(temp_file_path)
@@ -117,8 +135,9 @@ def predict():
                 "message": "Prediction successful."
             },
             "data": {
-                "predicted_label": int(predicted_label),
+                "predicted_label": predicted_label_description,
                 "predictions": predictions.tolist(),
+                "suggestion": suggestion,
                 "image_url": gcs_url  # URL gambar yang diunggah ke GCS
             }
         }), 200
