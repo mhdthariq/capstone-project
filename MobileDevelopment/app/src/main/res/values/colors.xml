@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Primary Colors -->
+    <color name="colorPrimary">#9bd7d5</color>
+    <color name="colorPrimaryDark">#4dc3c5</color>
+    <color name="colorAccent">#fef8e8</color>
+
+    <!-- Background Colors -->
+    <color name="backgroundLight">#ffffff</color>
+    <color name="backgroundDark">#e8f5f4</color>
+
+    <!-- Text Colors -->
+    <color name="textPrimary">#4dc3c5</color>
+    <color name="textSecondary">#6aa8a8</color>
+    <color name="textOnAccent">#3d3d3d</color>
+
+    <!-- Button Colors -->
+    <color name="buttonPrimary">#9bd7d5</color>
+    <color name="buttonSecondary">#4dc3c5</color>
+    <color name="buttonText">#ffffff</color>
+
+    <!-- Highlight and Error Colors -->
+    <color name="highlightColor">#ffcc80</color>
+    <color name="errorColor">#e57373</color>
+
+    <style name="secondaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">#9bd7d5</item> <!-- White background -->
+        <item name="strokeColor">#9bd7d5</item> <!-- Border color -->
+        <item name="strokeWidth">2dp</item> <!-- Border width -->
+        <item name="android:textColor">#ffffff</item>
+    </style>
+    <style name="primaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="backgroundTint">#4dc3c5</item> <!-- White background -->
+        <item name="strokeColor">#4dc3c5</item> <!-- Border color -->
+        <item name="strokeWidth">2dp</item> <!-- Border width -->
+        <item name="android:textColor">#ffffff</item> <!-- Text color -->
+    </style>
+</resources>
