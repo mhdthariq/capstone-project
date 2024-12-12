@@ -35,8 +35,8 @@ This API is designed to predict stress levels based on images using a TensorFlow
 ### Installation Steps
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone -b cc https://github.com/mhdthariq/capstone-project.git
+   cd capstone project
    ```
 2. Install dependencies:
    ```bash
