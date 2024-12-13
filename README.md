@@ -47,6 +47,7 @@ The mobile application design focuses on user accessibility and clarity. The int
 Include mockups or screenshots here
 
 <img src="Image/Mockup_Emoticalm.png" alt="Screenshot" style="max-width: 100%; height: auto;">
+
 ---
 
 ## Machine Learning Design
