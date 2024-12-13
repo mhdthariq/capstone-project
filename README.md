@@ -44,7 +44,7 @@ The mobile application design focuses on user accessibility and clarity. The int
 3. **History Tab**: Keeps track of past analyses and suggestions.
 
 ### Screenshots
-Include mockups or screenshots here
+Below the screnshoot of our application
 
 <img src="Image/Mockup_Emoticalm.png" alt="Screenshot" style="max-width: 100%; height: auto;">
 
