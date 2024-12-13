@@ -52,9 +52,6 @@ Below the screnshoot of our application
 
 ## Machine Learning Design
 
-# README for CNN Model for Stress Level Classification
-
-## Overview
 This Convolutional Neural Network (CNN) is designed to classify images into four stress levels based on facial expressions. The model was built and trained to recognize patterns in facial emotion data and assign them to specific stress categories: **no stress**, **weak stress**, **medium stress**, and **strong stress**.
 
 ## Dataset Description
