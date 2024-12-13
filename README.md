@@ -52,95 +52,64 @@ Below the screnshoot of our application
 
 ## Machine Learning Design
 
-The notebook is designed for training a Convolutional Neural Network (CNN) model to classify facial images into four stress levels based on emotions. It preprocesses the FER-2013 dataset, balances the data, applies data augmentation, and trains a deep learning model using Keras.
+# README for CNN Model for Stress Level Classification
 
-## Dataset
-- **Name**: FER-2013
-- **Structure**: Grayscale images of size 48x48 pixels.
-- **Classes**:
-  - Angry (0), Disgust (1), Fear (2), Happy (3), Sad (4), Surprise (5), Neutral (6).
-- **Mapping to Stress Levels**:
-  - No Stress: Happy (3)
-  - Weak Stress: Neutral (6), Surprise (5)
-  - Medium Stress: Disgust (1), Fear (2)
-  - Strong Stress: Angry (0), Sad (4)
-- **Splits**:
-  - Training: 28,709 images
-  - Testing: 3,589 images
+## Overview
+This Convolutional Neural Network (CNN) is designed to classify images into four stress levels based on facial expressions. The model was built and trained to recognize patterns in facial emotion data and assign them to specific stress categories: **no stress**, **weak stress**, **medium stress**, and **strong stress**.
 
-## Key Components
-### 1. **Data Preparation**
-- The notebook reads the FER-2013 dataset from a directory structure.
-- A mapping function converts the original 7 emotion categories into 4 stress categories (`no_stress`, `weak_stress`, `medium_stress`, `strong_stress`).
-- Splits the training data into training (80%) and validation (20%) subsets, ensuring balanced class distribution using stratified sampling.
+## Dataset Description
+The model uses the FER-2013 dataset, a popular benchmark for facial emotion recognition. This dataset contains:
+- Grayscale images of faces with a resolution of 48x48 pixels.
+- Seven initial emotion categories: Angry, Disgust, Fear, Happy, Sad, Surprise, and Neutral.
+- Training set: 28,709 images
+- Test set: 3,589 images
 
-### 2. **Data Balancing**
-- Uses **Random Oversampling** to address class imbalance in the training set, ensuring all stress categories have equal representation.
+For this model, the emotions are mapped to four stress levels:
+- **Happy**: No stress
+- **Neutral, Surprise**: Weak stress
+- **Disgust, Fear**: Medium stress
+- **Sad, Angry**: Strong stress
 
-### 3. **Data Augmentation**
-- Augments training images with the following transformations:
-  - Rotation: up to 25 degrees
-  - Horizontal and vertical shifts: up to 20%
-  - Shear: up to 15%
-  - Zoom: up to 20%
-  - Horizontal flips
-  - Nearest-fill for padding
+## Model Architecture
+The CNN processes input images of size **(224, 224, 3)** and classifies them into four stress levels. The architecture consists of:
+1. **Convolutional Layers**:
+   - Four layers with increasing filters: 32, 64, 128, and 256.
+   - Kernel size: (3, 3)
+   - Activation: ReLU
+2. **Pooling Layers**:
+   - MaxPooling after each convolutional layer with pool size (2, 2).
+3. **Flatten Layer**:
+   - Converts 2D feature maps into 1D feature vectors.
+4. **Fully Connected Layers**:
+   - Two layers with 512 and 256 neurons, ReLU activation.
+5. **Output Layer**:
+   - Four neurons with Softmax activation for multi-class classification.
 
-### 4. **Data Generators**
-- **Training Data Generator**: Applies augmentations and scales pixel values to the range [0, 1].
-- **Validation and Test Generators**: Only scales pixel values to the range [0, 1].
-- Resizes images to 224x224 pixels to fit the CNN input requirements.
+## Training Details
+- **Optimizer**: Adam with a learning rate of 0.0001
+- **Loss Function**: Categorical Crossentropy
+- **Metrics**: Accuracy
+- **Data Augmentation**: Includes rotation, shifting, zooming, and flipping to improve model generalization.
 
-### 5. **Model Training**
-- Defines a CNN model architecture (not included in this README but can be found in the notebook).
-- Optimizes the model using the Adam optimizer and `categorical_crossentropy` loss.
-- Tracks performance metrics such as accuracy during training and validation.
+## Performance
+The model aims to achieve over **70% accuracy** for classifying stress levels. Oversampling was applied to balance the dataset and improve performance on minority classes.
 
-## How to Use This Notebook
+## Deployment
+The model is suitable for deployment in real-time stress management applications. It is exported in TensorFlow.js format for use in web-based platforms and can be deployed using Google Cloud Run.
 
-### Prerequisites
-- Install required Python libraries:
-  ```bash
-  pip install tensorflow keras scikit-learn imbalanced-learn matplotlib pandas
-  ```
-- Ensure the FER-2013 dataset is properly organized in the following structure:
-  ```
-  data/
-  ├── train/
-  │   ├── angry/
-  │   ├── disgust/
-  │   ├── fear/
-  │   ├── happy/
-  │   ├── neutral/
-  │   ├── sad/
-  │   └── surprise/
-  └── test/
-      ├── angry/
-      ├── disgust/
-      ├── fear/
-      ├── happy/
-      ├── neutral/
-      ├── sad/
-      └── surprise/
-  ```
+## How to Use
+1. **Training**:
+   - Use the provided `train.ipynb` notebook to train the model with your data.
+2. **Evaluation**:
+   - Evaluate the model using the test set provided in the dataset.
+3. **Deployment**:
+   - Convert the model to TensorFlow.js format using `tensorflowjs_converter`.
+   - Deploy the model on Google Cloud Run or any compatible service.
 
-### Running the Notebook
-1. Load the dataset.
-2. Follow the notebook cells sequentially to:
-   - Preprocess the data.
-   - Balance the dataset.
-   - Augment the training data.
-   - Train the CNN model.
-   - Evaluate the model on the test set.
-
-### Outputs
-- Model performance metrics (accuracy, loss) during training and validation.
-- Balanced training dataset distribution.
-- Test set evaluation results.
-
-## Notes
-- The notebook uses a random seed (`random_state=42`) for reproducibility.
-- Make sure GPU acceleration is enabled in your environment (e.g., Google Colab) to speed up training.
+## Future Improvements
+- Integration with larger datasets for better generalization.
+- Fine-tuning using transfer learning with pre-trained models.
+- Optimization for mobile and edge devices for real-time stress detection.
 
 ## Author
 - **Name**: Abyan Dzakky
