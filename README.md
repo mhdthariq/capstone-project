@@ -44,7 +44,9 @@ The mobile application design focuses on user accessibility and clarity. The int
 3. **History Tab**: Keeps track of past analyses and suggestions.
 
 ### Screenshots
-Include mockups or screenshots here (e.g., `![App Mockup](path/to/mockup.png)`).
+Below the screnshoot of our application
+
+<img src="Image/Mockup_Emoticalm.png" alt="Screenshot" style="max-width: 100%; height: auto;">
 
 ---
 
@@ -59,8 +61,9 @@ The stress detection model uses a convolutional neural network (CNN) trained on 
    - 2: Medium Stress
    - 3: Strong Stress
 
-### Design Diagram
-![Model Design](path/to/model-design-image.png)
+
+### Model Architecture
+<img src="Image/model_architecture.png" alt="Screenshot" style="max-width: 100%; height: auto;">
 
 ---
 
