@@ -52,7 +52,14 @@ Below the screnshoot of our application
 
 ## Machine Learning Design
 
-This Convolutional Neural Network (CNN) is designed to classify images into four stress levels based on facial expressions. The model was built and trained to recognize patterns in facial emotion data and assign them to specific stress categories: **no stress**, **weak stress**, **medium stress**, and **strong stress**.
+The stress detection model uses a convolutional neural network (CNN) trained on annotated facial image datasets. The design involves:
+1. **Data Preprocessing**: Facial image normalization and augmentation.
+2. **Model Architecture**: Multi-layered CNN for feature extraction and classification.
+3. **Label Mapping**:
+   - 0: No Stress
+   - 1: Weak Stress
+   - 2: Medium Stress
+   - 3: Strong Stress
 
 
 ### Model Architecture
