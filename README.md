@@ -115,7 +115,7 @@ The model is suitable for deployment in real-time stress management applications
 For any questions or feedback, feel free to contact me.
 
 ### Model Architecture
-<img src="Image/model_architecture.jpg" alt="Screenshot" style="max-width: 100%; height: auto;">
+<img src="Image/model_architecture.png" alt="Screenshot" style="max-width: 100%; height: auto;">
 
 ---
 
