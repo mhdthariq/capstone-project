@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +16,10 @@ import com.google.firebase.auth.FirebaseAuth
 import android.widget.Toast
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.FirebaseUser
+import java.security.MessageDigest
+import java.security.SecureRandom
 
 class RegisterActivity : AppCompatActivity(), View.OnClickListener, View.OnFocusChangeListener, View.OnKeyListener {
 
@@ -57,6 +63,11 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener, View.OnFocus
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
+                    val user = auth.currentUser
+                    // Save user data to Firestore if user is successfully registered
+                    user?.let {
+                        saveUserToFirestore(it)
+                    }
                     Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
@@ -65,6 +76,65 @@ class RegisterActivity : AppCompatActivity(), View.OnClickListener, View.OnFocus
                     Toast.makeText(this, "Registration Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+    private fun saveUserToFirestore(user: FirebaseUser) {
+        val fullName = mBinding.fullNameEt.text.toString()
+        val email = mBinding.emailEt.text.toString()
+        val password = mBinding.passwordEt.text.toString()
+
+        // You should hash the password here before storing it
+        val hashedPassword = hashPassword(password) // Use a function to hash the password
+
+        // Create a map of user data
+        val userMap = hashMapOf(
+            "fullName" to fullName,
+            "email" to email,
+            "userId" to user.uid,
+            "password" to hashedPassword
+        )
+
+        // Get an instance of Firestore
+        val db = FirebaseFirestore.getInstance()
+
+        // Save the user data to Firestore under a collection "users"
+        db.collection("users")
+            .document(user.uid)
+            .set(userMap)
+            .addOnSuccessListener {
+                // Data saved successfully
+                Log.d("RegisterActivity", "User data saved to Firestore")
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+                Log.w("RegisterActivity", "Error saving user data", e)
+            }
+    }
+
+    // A function to hash the password (you can use any hashing algorithm you prefer)
+    private fun hashPassword(password: String): String {
+        // Generate a random salt
+        val salt = generateSalt()
+
+        // Combine password and salt
+        val saltedPassword = password + salt
+
+        // Hash the salted password using SHA-256
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(saltedPassword.toByteArray(Charsets.UTF_8))
+
+        // Convert the hash bytes to Base64 to make it easier to store
+        val hashedPassword = Base64.encodeToString(hashBytes, Base64.DEFAULT)
+
+        // Combine the salt and the hashed password and return it
+        return "$salt:$hashedPassword"
+    }
+
+    // Function to generate a random salt
+    private fun generateSalt(): String {
+        val salt = ByteArray(16)
+        val secureRandom = SecureRandom()
+        secureRandom.nextBytes(salt)
+        return Base64.encodeToString(salt, Base64.DEFAULT).trim()
     }
 
     private fun validateFullName():Boolean{

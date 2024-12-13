@@ -29,7 +29,7 @@
         android:theme="@style/Theme.Emoticalm"
         tools:targetApi="31">
         <activity
-            android:name=".RegisterActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -37,9 +37,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" android:exported="true" />
+        <activity android:name=".RegisterActivity" android:exported="true" />
         <activity android:name=".HomeActivity" android:exported="true" />
         <activity android:name=".SuccessActivity" android:exported="true" />
+        <activity android:name=".SettingsActivity" android:exported="true" />
+        <activity android:name=".HistoryActivity" android:exported="true" />
     </application>
 
 

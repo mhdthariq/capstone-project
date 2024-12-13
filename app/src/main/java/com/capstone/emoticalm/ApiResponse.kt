@@ -8,7 +8,8 @@ data class ApiResponse(
 data class Data(
     val image_url: String,
     val predicted_label: String,
-    val predictions: List<List<Double>>
+    val predictions: Any,
+    val suggestion: Any
 )
 
 data class Status(

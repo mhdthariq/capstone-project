@@ -33,6 +33,13 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import java.text.SimpleDateFormat
+import java.util.*
+
+import kotlin.random.Random
+
 class HomeActivity : AppCompatActivity() {
 
     private val PERMISSIONS_REQUEST_CODE = 10
@@ -49,6 +56,31 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Handle bottom navigation item selection
+        binding.bottomNavBar.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    // Handle home navigation here if needed
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_settings -> {
+                    // Navigate to Settings Activity
+                    val intent = Intent(this, SettingsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                R.id.nav_history -> {
+                    // Navigate to History Activity
+                    val intent = Intent(this, HistoryActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
+        }
 
         previewView = binding.previewView
         cameraSwitch = binding.cameraSwitch
@@ -123,6 +155,7 @@ class HomeActivity : AppCompatActivity() {
     private fun captureImage() {
         val executor = ContextCompat.getMainExecutor(this)
         imageCapture.takePicture(executor, object : ImageCapture.OnImageCapturedCallback() {
+
             override fun onCaptureSuccess(imageProxy: ImageProxy) {
                 val bitmap = imageProxyToBitmap(imageProxy)
                 if (bitmap != null) {
@@ -157,13 +190,18 @@ class HomeActivity : AppCompatActivity() {
 
     private fun saveImageToFile(bitmap: Bitmap) {
         try {
-            val tempFile = File(applicationContext.cacheDir, "captured_image.jpg")
-            val outputStream: OutputStream = FileOutputStream(tempFile)
+            val randomId = Random.nextInt(1, 1000)
+            val baseFilename_ = "captured_image"
+            val fileExtension = ".jpg"
+            val filename = "$baseFilename_$randomId$fileExtension"
+            val file = File(filesDir, filename)
+//            val tempFile = File(applicationContext.cacheDir, "captured_image.jpg")
+            val outputStream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
             outputStream.flush()
             outputStream.close()
 
-            uploadImage(tempFile)  // Upload the image after saving
+            uploadImage(file)  // Upload the image after saving
         } catch (e: Exception) {
             showToast("Failed to save image: ${e.message}")
         }
@@ -184,14 +222,69 @@ class HomeActivity : AppCompatActivity() {
                     val apiResponse = response.body()
                     apiResponse?.let {
                         Log.d("API Success", "Image URL: ${it.data.image_url}")
-                        Log.d("API Response", "Predicted label: ${it.data.predicted_label}")
-                        showToast("Predicted label: ${it.data.predicted_label}")
+
+                        // Handle predictions if it's an array
+                        val predictions = it.data.predictions
+                        if (predictions is List<*>) {
+                            val predictedLabel = predictions.getOrNull(0)?.toString() ?: "No prediction"
+                            Log.d("API Response", "Predicted label: $predictedLabel")
+                            showToast("Predicted label: $predictedLabel")
+                        } else {
+                            Log.e("API Error", "Predictions is not an array")
+                            showToast("Unexpected response format for predictions.")
+                        }
+                        // Get current user info from FirebaseAuth
+                        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: "Unknown"
+                        val userFullname = FirebaseAuth.getInstance().currentUser?.displayName ?: "Unknown"
+                        val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: "Unknown"
+
+//
+//                        // Get the current timestamp
+//                        val timestamp = System.currentTimeMillis()
+//
+//                        // Format the timestamp to Date format (e.g., dd/MM/yyyy HH:mm)
+//                        val date = Date(timestamp)
+//                        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+//                        val formattedDate = sdf.format(date)
+
+                        // Get device time
+                        val deviceCurrentTime = System.currentTimeMillis()
+
+                        // Format the device time using SimpleDateFormat for logging
+                        val deviceDateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                        val formattedDeviceDate = deviceDateFormat.format(deviceCurrentTime)
+
+
+                        // Create a history object to save
+                        val historyData = hashMapOf(
+                            "userId" to userId,
+                            "fullname" to userFullname,
+                            "email" to userEmail,
+                            "predicted_label" to it.data.predicted_label,
+                            "image" to it.data.image_url,
+                            "suggestion" to it.data.suggestion,
+                            "timestamp" to formattedDeviceDate // Store the formatted date instead of the raw timestamp
+                        )
+
+                        // Get Firestore instance
+                        val db = FirebaseFirestore.getInstance()
+
+                        // Add the history data to Firestore under a "history" collection
+                        db.collection("history")
+                            .add(historyData)
+                            .addOnSuccessListener {
+                                Log.d("Firestore", "History data saved successfully!")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w("Firestore", "Error saving history data", e)
+                            }
 
                         // Send the data to SuccessActivity
                         val intent = Intent(this@HomeActivity, SuccessActivity::class.java).apply {
                             putExtra("imageUrl", it.data.image_url)
                             putExtra("predictedLabel", it.data.predicted_label)
                             putExtra("predictions", it.data.predictions.toString()) // You can format it as needed
+                            putExtra("suggestion", it.data.suggestion.toString())
                         }
                         startActivity(intent)
                     }

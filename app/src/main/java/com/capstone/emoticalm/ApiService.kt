@@ -12,4 +12,5 @@ interface ApiService {
     @Multipart
     @POST("predict")
     fun uploadImage(@Part file: MultipartBody.Part): Call<ApiResponse>  // Change ResponseBody to ApiResponse
+
 }
