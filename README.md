@@ -97,7 +97,7 @@ This notebook is designed for training a Convolutional Neural Network (CNN) mode
 ---
 
 ### Model
-For Model you can access the link below:
+For Model you can access this link 
 https://drive.google.com/drive/folders/19MlSZ5-eTLbg_vCM3iASNqqlyJ18Llnc
 
 ## Notes
