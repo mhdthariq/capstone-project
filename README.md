@@ -44,8 +44,8 @@ The mobile application design focuses on user accessibility and clarity. The int
 3. **History Tab**: Keeps track of past analyses and suggestions.
 
 ### Screenshots
-Include mockups or screenshots here (e.g., `![App Mockup](path/to/mockup.png)`).
-
+Include mockups or screenshots here
+[Emoticalm Mockup](Image/Mockup_Emoticalm.png)
 ---
 
 ## Machine Learning Design
