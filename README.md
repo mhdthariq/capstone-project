@@ -96,6 +96,10 @@ This notebook is designed for training a Convolutional Neural Network (CNN) mode
 
 ---
 
+### Model
+For Model you can access the link below:
+https://drive.google.com/drive/folders/19MlSZ5-eTLbg_vCM3iASNqqlyJ18Llnc
+
 ## Notes
 - The notebook uses a random seed (`random_state=42`) for reproducibility.
 - Make sure GPU acceleration is enabled in your environment (e.g., Google Colab) to speed up training.
