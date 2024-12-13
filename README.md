@@ -54,8 +54,6 @@ Below the screnshoot of our application
 
 The notebook is designed for training a Convolutional Neural Network (CNN) model to classify facial images into four stress levels based on emotions. It preprocesses the FER-2013 dataset, balances the data, applies data augmentation, and trains a deep learning model using Keras.
 
----
-
 ## Dataset
 - **Name**: FER-2013
 - **Structure**: Grayscale images of size 48x48 pixels.
@@ -70,10 +68,7 @@ The notebook is designed for training a Convolutional Neural Network (CNN) model
   - Training: 28,709 images
   - Testing: 3,589 images
 
----
-
 ## Key Components
-
 ### 1. **Data Preparation**
 - The notebook reads the FER-2013 dataset from a directory structure.
 - A mapping function converts the original 7 emotion categories into 4 stress categories (`no_stress`, `weak_stress`, `medium_stress`, `strong_stress`).
@@ -100,8 +95,6 @@ The notebook is designed for training a Convolutional Neural Network (CNN) model
 - Defines a CNN model architecture (not included in this README but can be found in the notebook).
 - Optimizes the model using the Adam optimizer and `categorical_crossentropy` loss.
 - Tracks performance metrics such as accuracy during training and validation.
-
----
 
 ## How to Use This Notebook
 
@@ -145,13 +138,9 @@ The notebook is designed for training a Convolutional Neural Network (CNN) model
 - Balanced training dataset distribution.
 - Test set evaluation results.
 
----
-
 ## Notes
 - The notebook uses a random seed (`random_state=42`) for reproducibility.
 - Make sure GPU acceleration is enabled in your environment (e.g., Google Colab) to speed up training.
-
----
 
 ## Author
 - **Name**: Abyan Dzakky
